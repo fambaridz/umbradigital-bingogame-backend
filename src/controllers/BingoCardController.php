@@ -3,8 +3,9 @@
 class BingoCardController
 {
     protected $ranges;
+    protected $conn;
 
-    public function __construct()
+    public function __construct($conn)
     {
         $this->ranges = array(
             'B' => range(1, 25),
@@ -13,6 +14,7 @@ class BingoCardController
             'G' => range(56, 70),
             'O' => range(71, 85)
         );
+        $this->conn = $conn;
     }
 
     public function generateBingoCard()
@@ -32,7 +34,16 @@ class BingoCardController
             }
         }
 
-        return $bingoCard;
+        $jsonData = json_encode($bingoCard);
+        $sql = "INSERT INTO cards (card_numbers) VALUES ('$jsonData')";
+        
+        if ($this->conn->query($sql) === TRUE) {
+            $gameId = $this->conn->insert_id;
+            $response = array('id' => $gameId, 'numbers' => $bingoCard);
+            return $response;
+        } else {
+            return "Error storing data in the database: " . $this->conn->error;
+        }
     }
 }
 

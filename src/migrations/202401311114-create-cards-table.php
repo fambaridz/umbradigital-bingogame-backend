@@ -10,11 +10,8 @@ if ($conn->connect_error) {
 
 $sql = "CREATE TABLE cards (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    game_id INT,
-    letter CHAR(1),
-    number INT,
-    crossed_out BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (game_id) REFERENCES games(id)
+    card_numbers JSON NOT NULL,
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
 if ($conn->query($sql) === TRUE) {

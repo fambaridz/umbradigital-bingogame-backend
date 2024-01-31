@@ -9,13 +9,19 @@ require_once '../config/dbconfig.php';
 require_once '../src/controllers/BingoCardController.php';
 require_once '../src/controllers/BingoCallerController.php';
 
-$bingoCardController = new BingoCardController();
-$bingoCallerController = new BingoCallerController();
+$conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
-// API endpoint to generate and return a bingo card or a bingo call
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$bingoCardController = new BingoCardController($conn);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bingoCardData = $bingoCardController->generateBingoCard();
     echo json_encode($bingoCardData);
 } else {
     echo "Invalid request";
 }
+
+?>
