@@ -17,7 +17,6 @@ if ($conn->connect_error) {
 
 $bingoCallerController = new BingoCallerController($conn);
 
-// API endpoint to generate and return a bingo card or a bingo call
 if($_SERVER['REQUEST_METHOD'] === 'GET') {
     $bingoCallData = $bingoCallerController->generateBingoCall();
     echo json_encode($bingoCallData);

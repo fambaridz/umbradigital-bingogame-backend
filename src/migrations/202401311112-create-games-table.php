@@ -12,6 +12,7 @@ $sql = "CREATE TABLE games (
     id INT AUTO_INCREMENT PRIMARY KEY,
     numbers JSON NOT NULL,
     date_played TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    card_id INT,
     FOREIGN KEY (card_id) REFERENCES cards(id)
 )";
 
