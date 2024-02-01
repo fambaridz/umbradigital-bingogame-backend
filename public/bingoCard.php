@@ -17,7 +17,7 @@ if ($conn->connect_error) {
 
 $bingoCardController = new BingoCardController($conn);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $bingoCardData = $bingoCardController->generateBingoCard();
     echo json_encode($bingoCardData);
 } else {

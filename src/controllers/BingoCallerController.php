@@ -4,8 +4,18 @@ require_once('BingoCardController.php');
 
 class BingoCallerController extends BingoCardController
 {
-    public function generateBingoCall($cardId)
-    {
+    public function generateBingoCall() {
+
+        $latestCardIdQuery = "SELECT MAX(id) as max_id FROM cards";
+        $latestCardIdResult = $this->conn->query($latestCardIdQuery);
+
+        if ($latestCardIdResult && $latestCardIdResult->num_rows > 0) {
+            $latestCardIdRow = $latestCardIdResult->fetch_assoc();
+            $latestCardId = $latestCardIdRow['max_id'];
+        } else {
+            return ['error' => 'Failed to fetch the latest card_id'];
+        }
+
         $calls = array();
 
         $allNumbers = [];
@@ -20,29 +30,28 @@ class BingoCallerController extends BingoCardController
             $calls[] = array('letter' => $letter, 'number' => $allNumbers[$i]);
         }
 
-        $sql = "INSERT INTO games (numbers, card_id) VALUES (?, ?)";
-        $stmt = $this->conn->prepare($sql);
+        $jsonCalls = json_encode($calls);
+        $insertQuery = "INSERT INTO games (numbers, card_id) VALUES (?, ?)";
+        $insertStmt = $this->conn->prepare($insertQuery);
 
-        if (!$stmt) {
+        if (!$insertStmt) {
             return ['error' => 'Database error: ' . $this->conn->error];
         }
-        
-        $jsonCalls = json_encode($calls);
 
-        $stmt->bind_param("si", $jsonCalls, $cardId);
-        $success = $stmt->execute();
+        $insertStmt->bind_param("si", $jsonCalls, $latestCardId);
+        $insertSuccess = $insertStmt->execute();
 
-        if (!$success) {
-            return ['error' => 'Insertion error: ' . $stmt->error];
+        if (!$insertSuccess) {
+            return ['error' => 'Insertion error: ' . $insertStmt->error];
         }
 
-        $gameId = $stmt->insert_id;
+        $gameId = $insertStmt->insert_id;
 
-        $stmt->close();
+        $insertStmt->close();
 
         return array('game_id' => $gameId, 'numbers' => $calls);
     }
-
+    
     private function getLetterForNumber($number)
     {
         foreach ($this->ranges as $letter => $range) {
