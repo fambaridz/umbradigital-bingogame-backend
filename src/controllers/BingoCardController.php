@@ -8,11 +8,11 @@ class BingoCardController
     public function __construct($conn)
     {
         $this->ranges = array(
-            'B' => range(1, 25),
-            'I' => range(26, 40),
-            'N' => range(41, 55),
-            'G' => range(56, 70),
-            'O' => range(71, 85)
+            'B' => range(1, 15),
+            'I' => range(16, 30),
+            'N' => range(31, 45),
+            'G' => range(46, 60),
+            'O' => range(61, 75)
         );
         $this->conn = $conn;
     }
