@@ -15,10 +15,13 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+$bingoCardController = new BingoCardController($conn);
 $bingoCallerController = new BingoCallerController($conn);
 
-if($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $bingoCallData = $bingoCallerController->generateBingoCall();
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $bingoCardData = $bingoCardController->generateBingoCard();
+    $cardId = $bingoCardData['id'];
+    $bingoCallData = $bingoCallerController->generateBingoCall($cardId);
     echo json_encode($bingoCallData);
 } else {
     echo "Invalid request";
